@@ -2,3 +2,8 @@
 .venv/
 __pycache__/
 *.pyc
+*.dump
+
+.pytest_cache/
+fast_api_learning/database/chroma_database/
+fast_api_learning/database/chroma_database_v2/

@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: travel_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: travel_ai
+    volumes:
+      - travel-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U travel_user -d travel_ai"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - travel-ai-network
+
+  api:
+    build: .
+    env_file:
+      - .env
+    environment:
+      POST_GRES_HOST: postgres
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - travel-ai-network
+
+volumes:
+  travel-postgres-data:
+    external: true
+
+networks:
+  travel-ai-network:
